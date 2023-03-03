@@ -164,9 +164,11 @@ def collections_baseline_(word: str, threshold=1, syn='n') -> pd.DataFrame:
 		# 	bow = file.readline()
 		# 	file.close()
 		if word in ['love', 'war', 'money', 'happiness', 'loneliness']:
-			df_collections = pd.read_csv('data/df_collections.csv')
 			if syn == 'y':
 				word += '_syn'
+				df_collections = pd.read_pickle('data/df_collections_syn.pkl')
+			else:
+				df_collections = pd.read_pickle('data/df_collections.pkl')
 			res_df = df_collections.loc[df_collections[word] >= threshold]
 			res_df = res_df[['artist', 'title', 'play_count']]
 		else:
