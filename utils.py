@@ -179,3 +179,33 @@ def collections_baseline_(word: str, threshold=1, syn='n') -> pd.DataFrame:
 		print(f'{e.__doc__}')
 		sys.exit(0)
 	return res_df[:50].reset_index(drop=True)
+
+
+def genre_tag_rec(genre='any', tag='any') -> pd.DataFrame:
+	'''
+	:param genre: Жанр песни
+	:param tag: Тэг песни
+	:return: первые 10 рекомендаций по жанру и тэгу
+	'''
+	df_3b = pd.read_pickle('data/df_3b.pkl')
+	try:
+		if type(genre) != 'str' and (genre not in ['Rock', 'Electronic', 'Pop', 'Jazz', 'Rap', 'RnB', 'Metal', 'Country', 'Reggae', 'Blues', 'Latin', 'Folk', 'Punk', 'World', 'New Age', 'any']):
+			print(f"First parameter genre should be str, and one of ['Rock', 'Electronic', 'Pop', 'Jazz', 'Rap', 'RnB', 'Metal', 'Country', 'Reggae', 'Blues', 'Latin', 'Folk', 'Punk', 'World', 'New Age', 'any']. Now "
+				  f"using default value 'any'.\n")
+			genre = 'any'
+		if type(tag) != 'str' and (tag not in ['love', 'war', 'happiness', 'loneliness', 'money', 'any']):
+			print(f"First parameter genre should be str, and one of ['love', 'war', 'happiness', 'loneliness', 'money', 'any']. Now using default value 'any'.\n")
+			tag = 'any'
+
+		if genre != 'any':
+			df_res = df_3b.loc[df_3b['majority_genre'] == genre]
+		else:
+			df_res = df_3b.copy()
+		if tag != 'any':
+			df_res = df_res.loc[df_res['class'] == tag]
+	except Exception as e:
+		print(f'{e.__doc__}')
+		sys.exit(0)
+	df_res = df_res[['artist', 'title', 'play_count']]
+	print(f"10 best recommendations for genre <{genre}> and tag <{tag}>")
+	return df_res[:10].reset_index(drop=True)
